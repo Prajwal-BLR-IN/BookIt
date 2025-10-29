@@ -10,4 +10,5 @@ body {
 
 @theme {
   --color-primary: #ffd643;
+  --color-primary-dull: #fdcf26;
 }

@@ -4,9 +4,9 @@ import Footer from "../components/Footer";
 
 const MainLayout = () => {
   return (
-    <div className="bg-light flex min-h-screen flex-col text-gray-800">
+    <div className="flex min-h-screen flex-col">
       <Navbar />
-      <main className="container mx-auto grow px-4 py-6">
+      <main className="grow px-6 md:px-16 lg:px-24 xl:px-32">
         <Outlet />
       </main>
       <Footer />

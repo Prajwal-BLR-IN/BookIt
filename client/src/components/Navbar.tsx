@@ -40,7 +40,7 @@ const Navbar = () => {
           />
           <button
             onClick={handleSearch}
-            className="bg-primary flex h-full w-20 items-center justify-center rounded-lg px-5 py-3 text-white"
+            className="bg-primary flex h-full w-20 items-center justify-center rounded-lg px-5 py-3"
           >
             Search
           </button>
@@ -78,7 +78,7 @@ const Navbar = () => {
           />
           <button
             onClick={handleSearch}
-            className="bg-primary flex h-11 w-full items-center justify-center rounded-lg px-5 py-3 text-white"
+            className="bg-primary flex h-11 w-full items-center justify-center rounded-lg px-5 py-3"
           >
             Search
           </button>
