@@ -1,8 +1,20 @@
+import { Routes, Route } from "react-router-dom";
+import MainLayout from "./layouts/MainLayout";
+import Home from "./pages/Home";
+import Details from "./pages/Details";
+import Checkout from "./pages/Checkout";
+import Results from "./pages/Results";
+
 function App() {
   return (
-    <div className="bg-sky-700 px-4 py-2 text-white hover:bg-sky-800 sm:px-8 sm:py-3">
-      hello
-    </div>
+    <Routes>
+      <Route path="/" element={<MainLayout />}>
+        <Route index element={<Home />} />
+        <Route path="details/:id" element={<Details />} />
+        <Route path="checkout/:id" element={<Checkout />} />
+        <Route path="result" element={<Results />} />
+      </Route>
+    </Routes>
   );
 }
 
