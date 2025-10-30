@@ -2,11 +2,12 @@ import logo from "./logo.png";
 import menuIcon from "./menu icon.svg";
 import menuCloseIcon from "./menu close icon.svg";
 import type { Experience } from "../types/type";
-
+import arrowIcon from "./back arrow icon.svg";
 export const assets = {
   logo,
   menuIcon,
   menuCloseIcon,
+  arrowIcon,
 };
 
 export const experiences: Experience[] = [
