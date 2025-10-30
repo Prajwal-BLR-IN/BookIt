@@ -236,11 +236,24 @@ const Details = () => {
 
           {/* Confirm Button */}
           <button
+            onClick={() =>
+              navigate(`/checkout`, {
+                state: {
+                  experience,
+                  selectedDate,
+                  selectedTime,
+                  quantity,
+                  subtotal,
+                  tax,
+                  total,
+                },
+              })
+            }
             disabled={!selectedDate || !selectedTime}
-            className={`mt-4 w-full rounded-md py-2 font-medium transition ${
+            className={`mt-4 w-full cursor-pointer rounded-md py-2 font-medium transition ${
               !selectedDate || !selectedTime
                 ? "cursor-not-allowed bg-[#D7D7D7] text-[#7F7F7F]"
-                : "bg-primary text-[#161616] hover:bg-yellow-300"
+                : "bg-primary hover:bg-primary-dull text-[#161616]"
             }`}
           >
             Confirm

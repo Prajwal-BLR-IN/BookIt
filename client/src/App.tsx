@@ -14,8 +14,8 @@ function App() {
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Home />} />
           <Route path="details/:id" element={<Details />} />
-          <Route path="checkout/:id" element={<Checkout />} />
-          <Route path="result" element={<Results />} />
+          <Route path="checkout" element={<Checkout />} />
+          <Route path="confirmation" element={<Results />} />
         </Route>
       </Routes>
     </>
