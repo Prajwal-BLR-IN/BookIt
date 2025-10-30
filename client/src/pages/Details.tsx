@@ -1,12 +1,17 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { assets, experiences } from "../assets/assets";
+import { assets } from "../assets/assets";
 import toast from "react-hot-toast";
+import useCustomQuery from "../hooks/useQuery";
+import type { Experience } from "../types/type";
 
 const Details = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const experience = experiences.find((exp) => exp._id === id);
+  const { data: experience, isLoading } = useCustomQuery<Experience>(
+    `experience-${id}`,
+    `/experiences/${id}`,
+  );
 
   // Local states for slot selection
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -19,17 +24,17 @@ const Details = () => {
   const tax = Math.round(subtotal * 0.06); // 6% GST
   const total = subtotal + tax;
 
-  if (!experience) return <p>Experience not found</p>;
-
   // Get all unique dates
   const uniqueDates = Array.from(
-    new Set(experience.availableSlots.map((slot) => slot.date)),
+    new Set(experience?.availableSlots.map((slot) => slot.date)),
   );
 
   // Filter slots for selected date
   const filteredSlots = selectedDate
-    ? experience.availableSlots.filter((slot) => slot.date === selectedDate)
+    ? experience?.availableSlots.filter((slot) => slot.date === selectedDate)
     : [];
+
+  if (isLoading) return <p>Loading...</p>;
 
   return (
     <div>
@@ -94,7 +99,7 @@ const Details = () => {
                 Choose time
               </h3>
               <div className="flex flex-wrap gap-4">
-                {filteredSlots.map((slot) => {
+                {filteredSlots?.map((slot) => {
                   const remaining = slot.totalSlots - slot.bookedCount;
                   const soldOut = remaining <= 0;
                   const isSelected = selectedTime === slot.time;
@@ -151,7 +156,7 @@ const Details = () => {
                 Starts at
               </span>
               <span className="text-lg leading-6 font-normal text-[#161616]">
-                ₹{experience.price}
+                ₹{experience?.price}
               </span>
             </div>
 
@@ -180,7 +185,7 @@ const Details = () => {
                     }
 
                     // find the selected slot
-                    const slot = experience.availableSlots.find(
+                    const slot = experience?.availableSlots.find(
                       (s) => s.date === selectedDate && s.time === selectedTime,
                     );
 
