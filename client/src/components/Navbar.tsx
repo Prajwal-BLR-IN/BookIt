@@ -1,21 +1,21 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { assets } from "../assets/assets";
+import { useSearchStore } from "../store/searchStore";
 
 const Navbar = () => {
   // State to manage the mobile menu's visibility
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // State for search input (shared between mobile & desktop)
-  const [searchQuery, setSearchQuery] = useState("");
+  const { searchTerm, setSearchTerm, clearSearch } = useSearchStore();
 
   // Toggle mobile menu visibility
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
   // Handle search
   const handleSearch = () => {
-    console.log("Searching for:", searchQuery);
-    // Example: navigate(`/search?query=${searchQuery}`);
+    console.log("Searching for:", searchTerm);
     setIsMobileMenuOpen(false); // Close mobile menu after search
   };
 
@@ -24,7 +24,7 @@ const Navbar = () => {
       {/* Main Navigation Bar */}
       <nav className="relative z-20 flex h-20 items-center justify-between px-6 py-4 shadow-[0_2px_16px_0_rgba(0,0,0,0.10)] md:px-16 lg:px-24 xl:px-32">
         {/* Logo section */}
-        <Link to="/">
+        <Link to="/" onClick={clearSearch}>
           <img src={assets.logo} alt="Highway Delite" className="h-14 w-auto" />
         </Link>
 
@@ -32,15 +32,15 @@ const Navbar = () => {
         <div className="hidden h-10 items-center gap-4 md:flex">
           <input
             type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             className="focus:outline-primary flex h-full w-84 rounded-sm bg-[#EDEDED] px-4 py-3 text-sm leading-tight font-normal"
             placeholder="Search experiences"
           />
           <button
             onClick={handleSearch}
-            className="bg-primary flex h-full w-20 items-center justify-center rounded-lg px-5 py-3"
+            className="bg-primary flex h-full w-20 cursor-pointer items-center justify-center rounded-lg px-5 py-3"
           >
             Search
           </button>
@@ -70,15 +70,15 @@ const Navbar = () => {
         <div className="flex w-full flex-col items-center gap-4">
           <input
             type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             className="focus:outline-primary flex h-11 w-full rounded-sm bg-[#EDEDED] px-4 py-3 text-sm leading-tight font-normal"
             placeholder="Search experiences"
           />
           <button
             onClick={handleSearch}
-            className="bg-primary flex h-11 w-full items-center justify-center rounded-lg px-5 py-3"
+            className="bg-primary flex h-11 w-full cursor-pointer items-center justify-center rounded-lg px-5 py-3"
           >
             Search
           </button>
