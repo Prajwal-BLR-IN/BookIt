@@ -3,11 +3,14 @@ import menuIcon from "./menu icon.svg";
 import menuCloseIcon from "./menu close icon.svg";
 import type { Experience } from "../types/type";
 import arrowIcon from "./back arrow icon.svg";
+import tickCircleIcon from "./tick circle.svg";
+
 export const assets = {
   logo,
   menuIcon,
   menuCloseIcon,
   arrowIcon,
+  tickCircleIcon,
 };
 
 export const experiences: Experience[] = [
