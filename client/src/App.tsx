@@ -4,17 +4,21 @@ import Home from "./pages/Home";
 import Details from "./pages/Details";
 import Checkout from "./pages/Checkout";
 import Results from "./pages/Results";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<MainLayout />}>
-        <Route index element={<Home />} />
-        <Route path="details/:id" element={<Details />} />
-        <Route path="checkout/:id" element={<Checkout />} />
-        <Route path="result" element={<Results />} />
-      </Route>
-    </Routes>
+    <>
+      <Toaster />
+      <Routes>
+        <Route path="/" element={<MainLayout />}>
+          <Route index element={<Home />} />
+          <Route path="details/:id" element={<Details />} />
+          <Route path="checkout/:id" element={<Checkout />} />
+          <Route path="result" element={<Results />} />
+        </Route>
+      </Routes>
+    </>
   );
 }
 
