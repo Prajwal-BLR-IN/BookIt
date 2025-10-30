@@ -4,6 +4,7 @@ import { assets } from "../assets/assets";
 import toast from "react-hot-toast";
 import useCustomQuery from "../hooks/useQuery";
 import type { Experience } from "../types/type";
+import ExperienceDetailSkeleton from "../components/ExpienceDetailCardSkeleton";
 
 const Details = () => {
   const { id } = useParams();
@@ -34,7 +35,7 @@ const Details = () => {
     ? experience?.availableSlots.filter((slot) => slot.date === selectedDate)
     : [];
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <ExperienceDetailSkeleton />;
 
   return (
     <div>

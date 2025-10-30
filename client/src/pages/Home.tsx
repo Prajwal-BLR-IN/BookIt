@@ -3,9 +3,13 @@ import type { Experience } from "../types/type";
 import useCustomQuery from "../hooks/useQuery";
 import { useSearchStore } from "../store/searchStore";
 import { assets } from "../assets/assets";
+import ExperienceListSkeleton from "../components/ExperienceListSkeleton";
 
 const Home = () => {
   const { searchTerm, clearSearch } = useSearchStore();
+
+  // Create an array to map over skeleton loader
+  const skeletonItems = Array(8).fill(0);
 
   const {
     data: experiences = [],
@@ -13,7 +17,7 @@ const Home = () => {
     isLoading,
   } = useCustomQuery<Experience[]>("experiences", "/experiences");
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <ExperienceListSkeleton />;
   if (isError) return <p>Something went wrong</p>;
 
   const filteredExperiences = experiences.filter((exp) =>
