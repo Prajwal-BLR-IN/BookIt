@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import api from "../api/axios";
+import { useNavigate } from "react-router-dom";
 
 // Type for hook parameters
 interface UseCustomMutationParams {
   url: string;
-  onSuccessRedirect?: () => void;
   invalidateKey?: string;
   invalidateKey2?: string;
 }
@@ -22,11 +22,11 @@ type PayloadData = Record<string, any>;
 // Custom mutation hook
 export const useCustomMutation = ({
   url,
-  onSuccessRedirect,
   invalidateKey,
   invalidateKey2,
 }: UseCustomMutationParams) => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   return useMutation<ApiResponse, any, PayloadData>({
     mutationFn: async (payload) => {
@@ -34,15 +34,18 @@ export const useCustomMutation = ({
       return data;
     },
 
-    onSuccess: async () => {
+    onSuccess: async (data: ApiResponse) => {
+      console.log("onSuccess fired with data:", data);
+
       // Invalidate queries if needed
       if (invalidateKey)
         await queryClient.invalidateQueries({ queryKey: [invalidateKey] });
       if (invalidateKey2)
         await queryClient.invalidateQueries({ queryKey: [invalidateKey2] });
 
-      // Redirect if provided
-      if (onSuccessRedirect) onSuccessRedirect();
+      if (data.success) {
+        navigate("/confirmation", { state: { refId: data.bookingRef } });
+      }
     },
 
     onError: (error: any) => {

@@ -8,9 +8,6 @@ import ExperienceListSkeleton from "../components/ExperienceListSkeleton";
 const Home = () => {
   const { searchTerm, clearSearch } = useSearchStore();
 
-  // Create an array to map over skeleton loader
-  const skeletonItems = Array(8).fill(0);
-
   const {
     data: experiences = [],
     isError,

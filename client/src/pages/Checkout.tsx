@@ -44,16 +44,14 @@ const Checkout = () => {
     }));
   };
 
-  //  Use single mutation hook for both promo and booking
+  //  Use mutation hook for booking
   const { mutate: createBooking } = useCustomMutation({
     url: "/bookings",
     invalidateKey: `experience-${experience._id}`,
-    onSuccessRedirect: () => navigate("/confirmation"),
   });
 
   const { mutate: validatePromo } = useMutation({
     mutationFn: async (payload: { code: string; subtotal: number }) => {
-      // <-- Add types
       const { data } = await api.post("/promo/validate", payload);
       return data;
     },
