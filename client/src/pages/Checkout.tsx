@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { useCustomMutation } from "../hooks/useCustomMutation";
 import { useMutation } from "@tanstack/react-query";
 import api from "../api/axios";
+import { motion } from "motion/react";
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -122,7 +123,10 @@ const Checkout = () => {
         <span className="text-sm leading-tight font-medium">Checkout</span>
       </button>
 
-      <form
+      <motion.form
+        initial={{ y: 30, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6 }}
         onSubmit={handleSubmit}
         className="grid grid-cols-1 items-baseline gap-8 lg:grid-cols-3 lg:gap-12"
       >
@@ -196,7 +200,12 @@ const Checkout = () => {
         </div>
 
         {/* Right: Summary Card */}
-        <div className="sticky top-18 h-max space-y-6 rounded-xl bg-[#EFEFEF] p-6 text-[#656565]">
+        <motion.div
+          initial={{ y: 30, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="sticky top-18 h-max space-y-6 rounded-xl bg-[#EFEFEF] p-6 text-[#656565]"
+        >
           <div className="space-y-3 text-sm">
             <div className="flex justify-between">
               <span className="text-base leading-5 font-normal">
@@ -264,8 +273,8 @@ const Checkout = () => {
           >
             Pay and Confirm
           </button>
-        </div>
-      </form>
+        </motion.div>
+      </motion.form>
     </div>
   );
 };

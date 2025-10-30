@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import useCustomQuery from "../hooks/useQuery";
 import type { Experience } from "../types/type";
 import ExperienceDetailSkeleton from "../components/ExpienceDetailCardSkeleton";
+import { motion } from "motion/react";
 
 const Details = () => {
   const { id } = useParams();
@@ -53,22 +54,39 @@ const Details = () => {
       </button>
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 lg:gap-12">
         {/* Left: experience image & details */}
-        <div className="lg:col-span-2">
-          <img
+        <motion.div
+          initial={{ y: 30, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6 }}
+          className="lg:col-span-2"
+        >
+          <motion.img
+            initial={{ scale: 0.98, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5 }}
             src={experience?.image}
             alt="experience image"
             className="mb-4 h-auto w-full rounded-xl object-cover md:max-h-100"
           />
           {/* Description */}
-          <div className="my-8">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="my-8"
+          >
             <h2 className="text-2xl leading-8 font-medium">
               {experience?.title}
             </h2>
             <p className="text-[#6C6C6C]">{experience?.description}</p>
-          </div>
+          </motion.div>
 
           {/* --- Choose Date Section --- */}
-          <div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
             <h3 className="mb-2 text-lg leading-6 font-medium">Choose date</h3>
             <div className="flex flex-wrap gap-4">
               {uniqueDates.map((date) => (
@@ -91,7 +109,7 @@ const Details = () => {
                 </button>
               ))}
             </div>
-          </div>
+          </motion.div>
 
           {/* --- Choose Time Section --- */}
           {selectedDate && (
@@ -139,17 +157,26 @@ const Details = () => {
 
           {/* About info */}
 
-          <div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+          >
             <h3 className="mt-8 mb-2 text-lg leading-6 font-medium">About</h3>
             <p className="rounded-sm bg-[#EEEEEE] px-3 py-2 text-xs leading-4 font-normal text-[#838383]">
               Scenic routes, trained guides, and safety briefing. Minimum age
               10.
             </p>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Right: Booking Summary Card */}
-        <div className="sticky top-18 h-max space-y-6 rounded-xl bg-[#EFEFEF] p-6 text-[#656565]">
+        <motion.div
+          initial={{ y: 30, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="sticky top-18 h-max space-y-6 rounded-xl bg-[#EFEFEF] p-6 text-[#656565]"
+        >
           <div className="space-y-3 text-sm text-gray-700">
             {/* Starts at */}
             <div className="flex justify-between">
@@ -264,7 +291,7 @@ const Details = () => {
           >
             Confirm
           </button>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

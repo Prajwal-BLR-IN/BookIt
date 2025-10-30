@@ -5,7 +5,7 @@ const ExperienceListSkeleton = () => {
   const skeletonItems = Array(8).fill(0);
 
   return (
-    <div className="my-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="my-12 grid max-w-[1440px] grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
       {skeletonItems.map((_, index) => (
         <SkeletonCard key={index} />
       ))}

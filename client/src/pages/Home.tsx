@@ -4,6 +4,7 @@ import useCustomQuery from "../hooks/useQuery";
 import { useSearchStore } from "../store/searchStore";
 import { assets } from "../assets/assets";
 import ExperienceListSkeleton from "../components/ExperienceListSkeleton";
+import { motion } from "motion/react";
 
 const Home = () => {
   const { searchTerm, clearSearch } = useSearchStore();
@@ -41,8 +42,20 @@ const Home = () => {
           </button>
         </div>
       ) : (
-        filteredExperiences.map((exp) => (
-          <ExperienceCard key={exp._id} experience={exp} />
+        filteredExperiences.map((exp, index) => (
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            transition={{
+              duration: 0.4,
+              delay: Math.min(0.1 * index, 1),
+              ease: "easeOut",
+            }}
+            viewport={{ once: true }}
+            key={exp._id}
+          >
+            <ExperienceCard experience={exp} />
+          </motion.div>
         ))
       )}
     </section>
