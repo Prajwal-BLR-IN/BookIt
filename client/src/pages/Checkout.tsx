@@ -2,12 +2,15 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
 import toast from "react-hot-toast";
+import { useCustomMutation } from "../hooks/useCustomMutation";
+import { useMutation } from "@tanstack/react-query";
+import api from "../api/axios";
 
 const Checkout = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
 
-  // Redirect if accessed directly
+  // Redirect if user comes here directly
   if (!state) {
     navigate("/");
     return null;
@@ -30,19 +33,80 @@ const Checkout = () => {
     agreed: false,
   });
 
+  const [discount, setDiscount] = useState(0);
+  const [finalTotal, setFinalTotal] = useState(total);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
-    setForm({ ...form, [name]: type === "checkbox" ? checked : value });
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
+  //  Use single mutation hook for both promo and booking
+  const { mutate: createBooking } = useCustomMutation({
+    url: "/bookings",
+    invalidateKey: `experience-${experience._id}`,
+    onSuccessRedirect: () => navigate("/confirmation"),
+  });
+
+  const { mutate: validatePromo } = useMutation({
+    mutationFn: async (payload: { code: string; subtotal: number }) => {
+      // <-- Add types
+      const { data } = await api.post("/promo/validate", payload);
+      return data;
+    },
+    onError: (err: any) => {
+      const message =
+        err.response?.data?.message || "Invalid promo or server error";
+      toast.error(message);
+    },
+  });
+
+  // Handle promo code validation
+  const handleApplyPromo = () => {
+    validatePromo(
+      { code: form.promo, subtotal },
+      {
+        onSuccess: (data: any) => {
+          if (data.valid) {
+            setDiscount(data.discount);
+            setFinalTotal(data.newTotal);
+            toast.success(data.message);
+          } else {
+            toast.error("Invalid promo code");
+          }
+        },
+      },
+    );
+  };
+
+  //  Final booking submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!form.agreed) {
-      toast.error("Please agree to the terms and safety policy.");
+      toast.error("Please agree to the safety policy");
       return;
     }
 
-    navigate("/confirmation", { state: { refId: "HUF56&SO" } });
+    if (!selectedDate || !selectedTime) {
+      toast.error("Please select a date and time");
+      return;
+    }
+
+    createBooking({
+      experienceId: experience._id,
+      name: form.fullName,
+      email: form.email,
+      slot: { date: selectedDate, time: selectedTime },
+      qty: quantity,
+      promoCode: form.promo || null,
+      subtotal,
+      tax,
+      finalPrice: finalTotal,
+    });
   };
 
   return (
@@ -107,7 +171,9 @@ const Checkout = () => {
             />
             <button
               type="button"
-              className="flex h-10 cursor-pointer items-center justify-center rounded-lg bg-[#161616] px-4 py-3 text-sm leading-[18px] font-light text-[#F9F9F9] transition hover:bg-[#2B2B2B]"
+              onClick={handleApplyPromo}
+              disabled={discount > 0}
+              className={`flex h-10 cursor-pointer items-center justify-center rounded-lg bg-[#161616] px-4 py-3 text-sm leading-[18px] font-light text-[#F9F9F9] transition hover:bg-[#2B2B2B] ${discount > 0 && "cursor-not-allowed opacity-60"}`}
             >
               Apply
             </button>
@@ -178,18 +244,25 @@ const Checkout = () => {
               </span>
             </div>
 
+            {discount > 0 && (
+              <div className="flex justify-between text-green-600">
+                <span>Discount</span>
+                <span>- ₹{discount}</span>
+              </div>
+            )}
+
             <hr className="my-3 border-[#D9D9D9]" />
 
             <div className="flex justify-between text-xl leading-6 font-medium text-[#161616]">
               <span>Total</span>
-              <span>₹{total}</span>
+              <span>₹{finalTotal}</span>
             </div>
           </div>
 
           {/* Pay & Confirm Button */}
           <button
             type="submit"
-            className="bg-primary hover:bg-primary-dull mt-4 w-full rounded-md py-2 font-medium text-[#161616] transition"
+            className="bg-primary hover:bg-primary-dull mt-4 w-full cursor-pointer rounded-md py-2 font-medium text-[#161616] transition"
           >
             Pay and Confirm
           </button>

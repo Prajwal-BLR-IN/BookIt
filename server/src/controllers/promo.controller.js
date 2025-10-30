@@ -27,6 +27,7 @@ export const validatePromo = async (req, res) => {
     const newTotal = Math.max(subtotal - discount, 0);
 
     res.json({
+      success: true,
       valid: true,
       code: promo.code,
       discount,

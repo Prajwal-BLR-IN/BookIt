@@ -1,39 +1,37 @@
-import Booking from "../models/Booking.js";
-import Experience from "../models/Experience.js";
-
-// @desc Create a booking
-// @route POST /api/bookings
 export const createBooking = async (req, res) => {
   try {
-    const { experienceId, name, email, slot, qty, promoCode, subtotal, tax, finalPrice } = req.body;
+    const {
+      experienceId,
+      name,
+      email,
+      slot,
+      qty,
+      promoCode,
+      subtotal,
+      tax,
+      finalPrice,
+    } = req.body;
 
-    // Validate fields
     if (!experienceId || !name || !email || !slot?.date || !slot?.time) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    // Find the experience
     const experience = await Experience.findById(experienceId);
-    if (!experience) {
-      return res.status(404).json({ message: "Experience not found" });
-    }
+    if (!experience) return res.status(404).json({ message: "Experience not found" });
 
-    // Find the correct slot
     const targetSlot = experience.availableSlots.find(
       (s) => s.date === slot.date && s.time === slot.time
     );
 
-    if (!targetSlot) {
-      return res.status(400).json({ message: "Invalid slot selection" });
-    }
+    if (!targetSlot) return res.status(400).json({ message: "Invalid slot selection" });
 
-    // Check if slots are available
     const remaining = targetSlot.totalSlots - targetSlot.bookedCount;
-    if (remaining <= 0) {
+    if (remaining <= 0)
       return res.status(400).json({ message: "Slot sold out" });
-    }
 
-    // Create the booking
+    if (qty > remaining)
+      return res.status(400).json({ message: `Only ${remaining} slot(s) left for this time.` });
+
     const booking = new Booking({
       experienceId,
       name,
@@ -48,12 +46,11 @@ export const createBooking = async (req, res) => {
 
     await booking.save();
 
-    // Increment the slot's booked count
-    targetSlot.bookedCount += 1;
+    targetSlot.bookedCount += qty;
     await experience.save();
 
-    // Return booking confirmation
     res.status(201).json({
+      success: true,
       message: "Booking confirmed",
       bookingRef: booking.bookingRef,
       experienceTitle: experience.title,
