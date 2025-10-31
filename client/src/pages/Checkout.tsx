@@ -6,6 +6,7 @@ import { useCustomMutation } from "../hooks/useCustomMutation";
 import { useMutation } from "@tanstack/react-query";
 import api from "../api/axios";
 import { motion } from "motion/react";
+import SpinnerLoader from "../components/SpinnerLoader";
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -34,9 +35,22 @@ const Checkout = () => {
     agreed: false,
   });
 
+  // Define the shape of for errors
+  interface FormErrors {
+    fullName: string;
+    email: string;
+  }
+
+  // ADD ERROR STATE: Create a state to hold error messages
+  const [errors, setErrors] = useState<FormErrors>({
+    fullName: "",
+    email: "",
+  });
+
   const [discount, setDiscount] = useState(0);
   const [finalTotal, setFinalTotal] = useState(total);
 
+  // A helper function to update the form state
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => ({
@@ -46,7 +60,7 @@ const Checkout = () => {
   };
 
   //  Use mutation hook for booking
-  const { mutate: createBooking } = useCustomMutation({
+  const { mutate: createBooking, isPending } = useCustomMutation({
     url: "/bookings",
     invalidateKey: `experience-${experience._id}`,
   });
@@ -85,15 +99,43 @@ const Checkout = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    // --- Start Validation ---
+    const newErrors: FormErrors = { fullName: "", email: "" };
+    let hasErrors = false;
+
+    // Validate Full Name
+    if (!form.fullName.trim()) {
+      newErrors.fullName = "*required";
+      hasErrors = true;
+    }
+
+    // Validate Email
+    if (!form.email.trim()) {
+      newErrors.email = "*required";
+      hasErrors = true;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      newErrors.email = "Invalid Email";
+      hasErrors = true;
+    }
+
+    // Set the errors state
+    setErrors(newErrors);
+
+    // If there are field errors, stop submission
+    if (hasErrors) {
+      toast.error("Fill required fields");
+      return;
+    }
+
     if (!form.agreed) {
       toast.error("Please agree to the safety policy");
       return;
     }
 
-    if (!selectedDate || !selectedTime) {
-      toast.error("Please select a date and time");
-      return;
-    }
+    // if (!selectedDate || !selectedTime) {
+    //   toast.error("Please select a date and time");
+    //   return;
+    // }
 
     createBooking({
       experienceId: experience._id,
@@ -135,19 +177,28 @@ const Checkout = () => {
           {/* Full name and email */}
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <label htmlFor="fullName" className="flex flex-col gap-2">
-              <p className="text-sm leading-[18px] font-normal">Full name</p>
+              <p className="text-sm leading-[18px] font-normal">
+                Full name{" "}
+                {errors.fullName && (
+                  <span className="text-red-600">{errors.fullName}</span>
+                )}{" "}
+              </p>
               <input
                 type="text"
                 name="fullName"
                 placeholder="Your name"
                 value={form.fullName}
                 onChange={handleChange}
-                required
                 className="focus:border-primary h-10 w-full rounded-md border border-transparent bg-[#DDDDDD] px-4 py-3 text-sm leading-tight text-[#161616] placeholder:text-[#838383] focus:border focus:outline-none"
               />
             </label>
             <label htmlFor="email" className="flex flex-col gap-2">
-              <p className="text-sm leading-[18px] font-normal">Email</p>
+              <p className="text-sm leading-[18px] font-normal">
+                Email{" "}
+                {errors.email && (
+                  <span className="text-red-600">{errors.email}</span>
+                )}{" "}
+              </p>
 
               <input
                 type="email"
@@ -155,7 +206,6 @@ const Checkout = () => {
                 placeholder="Your email"
                 value={form.email}
                 onChange={handleChange}
-                required
                 className="focus:border-primary h-10 w-full rounded-md border border-transparent bg-[#DDDDDD] px-4 py-3 text-sm leading-tight text-[#161616] placeholder:text-[#838383] focus:border focus:outline-none"
               />
             </label>
@@ -268,10 +318,11 @@ const Checkout = () => {
 
           {/* Pay & Confirm Button */}
           <button
+            disabled={isPending}
             type="submit"
-            className="bg-primary hover:bg-primary-dull mt-4 w-full cursor-pointer rounded-md py-2 font-medium text-[#161616] transition"
+            className={`bg-primary mt-4 flex w-full items-center justify-center rounded-md py-2 font-medium text-[#161616] transition ${isPending ? "bg-primary/80 cursor-not-allowed" : "hover:bg-primary-dull cursor-pointer"}`}
           >
-            Pay and Confirm
+            {isPending ? <SpinnerLoader /> : <span>Pay and Confirm</span>}
           </button>
         </motion.div>
       </motion.form>
