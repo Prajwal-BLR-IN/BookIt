@@ -9,7 +9,11 @@ import promoRouter from "./routes/promo.routes.js";
 const app = express();
 
 // Middlewares
-app.use(cors());
+app.use(cors(
+  {
+    origin: ["https://book-it-theta-kohl.vercel.app", "http://localhost:5173"]
+  }
+));
 app.use(express.json());
 
 // Connect DB
