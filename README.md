@@ -6,7 +6,7 @@ Bookit is a **full-stack web application** built using the **MERN Stack + TypeSc
 
 ## Live Preview
 
-👉 **[View the live application](https://your-deployment-link.com)**
+👉 **[View the live application](https://book-it-theta-kohl.vercel.app/)**
 
 ---
 
